@@ -131,6 +131,8 @@ class PascalVocReader:
         # shapes type:
         # [labbel, [(x1,y1), (x2,y2), (x3,y3), (x4,y4)], color, color, difficult]
         self.shapes = []
+        
+        self.annot = []
         self.info = []
         self.filepath = filepath
         self.verified = False
@@ -142,6 +144,9 @@ class PascalVocReader:
 
     def getShapes(self):
         return self.shapes
+
+    def getAnnot(self):
+        return self.annot
     
     def getInfo(self):
         return self.info
@@ -153,6 +158,7 @@ class PascalVocReader:
         ymax = int(bndbox.find('ymax').text)
         points = [(xmin, ymin), (xmax, ymin), (xmax, ymax), (xmin, ymax)]
         self.shapes.append((label, points, None, None, difficult))
+        self.annot.append([xmin, xmax, ymin, ymax, label])
 
     def parseXML(self):
         assert self.filepath.endswith(XML_EXT), "Unsupport file format"
