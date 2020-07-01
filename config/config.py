@@ -26,7 +26,7 @@ Cfg.mosaic = 1
 
 Cfg.letter_box = 0
 Cfg.jitter = 0.2
-Cfg.classes = 80
+Cfg.classes = 3
 Cfg.track = 0
 Cfg.w = Cfg.width
 Cfg.h = Cfg.height
