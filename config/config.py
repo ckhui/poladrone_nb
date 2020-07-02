@@ -1,8 +1,8 @@
 from easydict import EasyDict
 
 Cfg = EasyDict()
-Cfg.batch = 64
-Cfg.subdivisions = 16
+Cfg.batch = 4
+Cfg.subdivisions = 4
 Cfg.width = 416
 Cfg.height = 416
 Cfg.channels = 3
