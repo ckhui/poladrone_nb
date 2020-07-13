@@ -197,9 +197,10 @@ def blend_truth_mosaic(out_img, img, bboxes, w, h, cut_x, cut_y, i_mixup,
 
 
 class Detection_dataset(Dataset):
-    def __init__(self, image_paths, cfg=None):
+    def __init__(self, image_paths, cfg=None, val=False):
         super(Detection_dataset, self).__init__()
 
+        self.val_mode = val
         self.cfg = cfg
 
         names = ["palm1_npt", "palm1_byt", "palm2_mtl"]
@@ -248,7 +249,7 @@ class Detection_dataset(Dataset):
         out_bboxes = []
 
         ## augmentation
-        if mosaic:
+        if mosaic and not self.val_mode:
             min_offset = 0.2
             max_offset = 1 - min_offset
             cut_x = random.randint(int(w * min_offset), int(w * max_offset))
