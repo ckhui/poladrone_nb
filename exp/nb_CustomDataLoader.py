@@ -196,6 +196,14 @@ def blend_truth_mosaic(out_img, img, bboxes, w, h, cut_x, cut_y, i_mixup,
     return out_img, bboxes
 
 
+def resize_gt(gt, srcSize=(1000,1000), targetSize = (416,416)):
+    ratio_h = targetSize[0] / srcSize[0]
+    ratio_w = targetSize[1] / srcSize[1]
+
+    gt = gt * [ratio_w, ratio_h, ratio_w, ratio_h, 1]
+
+    return gt
+
 class Detection_dataset(Dataset):
     def __init__(self, image_paths, cfg=None, val=False):
         super(Detection_dataset, self).__init__()
@@ -337,8 +345,10 @@ class Detection_dataset(Dataset):
             ## read image and Annot
             img_path = list(self.truth.keys())[index]
             img = cv2.imread(img_path)
+            img = cv2.resize(img, (w, h), cv2.INTER_LINEAR)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             bboxes = np.array(self.truth.get(img_path), dtype=np.float)
+            bboxes = resize_gt(bboxes)
 
             out_img = img
             out_bboxes = bboxes
