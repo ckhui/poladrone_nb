@@ -190,7 +190,7 @@ class Custom_Yolo_loss(nn.Module):
 
         return loss, loss_xy, loss_wh, loss_obj, loss_cls, loss_l2
 
-def custom_train(train_dataset, val_dataset, model, device, config, epochs=5, batch_size=1, save_cp=True, log_step=20, val_epoch=10, img_scale=0.5):
+def custom_train(train_dataset, val_dataset, model, device, config, epochs=5, batch_size=1, save_cp=True, cp_epoch=10, log_step=20, val_epoch=10, img_scale=0.5):
 #     train_dataset = Yolo_dataset(config.train_label, config)
 #     val_dataset = Yolo_dataset(config.val_label, config)
 
@@ -303,6 +303,9 @@ def custom_train(train_dataset, val_dataset, model, device, config, epochs=5, ba
                 pbar.update(images.shape[0])
 
         if save_cp:
+            if (epochs % cp_epoch) > 0:
+                break;
+
             try:
                 os.mkdir(config.checkpoints)
                 logging.info('Created checkpoint directory')
@@ -311,7 +314,6 @@ def custom_train(train_dataset, val_dataset, model, device, config, epochs=5, ba
             torch.save(model.state_dict(), os.path.join(config.checkpoints, f'Yolov4_epoch{epoch + 1}.pth'))
             logging.info(f'Checkpoint {epoch + 1} saved !')
 
-            torch.cuda.empty_cache()
 
         if (epochs % val_epoch) > 0:
             continue
