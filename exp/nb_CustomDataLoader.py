@@ -205,10 +205,11 @@ def resize_gt(gt, srcSize=(1000,1000), targetSize = (416,416)):
     return gt
 
 class Detection_dataset(Dataset):
-    def __init__(self, image_paths, cfg=None, val=False):
+    def __init__(self, image_paths, cfg=None, val=False, val_keep_size=False):
         super(Detection_dataset, self).__init__()
 
         self.val_mode = val
+        self.val_keep_size = val_keep_size
         self.cfg = cfg
 
         names = ["palm1_npt", "palm1_byt", "palm2_mtl"]
@@ -345,10 +346,13 @@ class Detection_dataset(Dataset):
             ## read image and Annot
             img_path = list(self.truth.keys())[index]
             img = cv2.imread(img_path)
-            img = cv2.resize(img, (w, h), cv2.INTER_LINEAR)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             bboxes = np.array(self.truth.get(img_path), dtype=np.float)
-            bboxes = resize_gt(bboxes)
+
+            if not self.val_keep_size:
+                img = cv2.resize(img, (w, h), cv2.INTER_LINEAR)
+                bboxes = resize_gt(bboxes)
+
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             out_img = img
             out_bboxes = bboxes

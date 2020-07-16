@@ -5,6 +5,7 @@
 # file to edit: dev_nb/TrainingRunnner.ipynb
 
 from exp.nb_CustomDataLoader import Detection_dataset
+from exp.nb_LoggingModule import custom_init_logger
 
 import os, sys
 # base = "/Users/ckh/Documents/Poladrone/nb"
@@ -19,7 +20,8 @@ def custom_collate(batch):
     bboxes = []
     for i, (img, box) in enumerate(batch):
         images.append([img])
-
+        if len(box) == 0:
+            continue
         box = np.concatenate((box, [[i]]*len(box)), 1)
         bboxes.append(box)
 
@@ -335,6 +337,3 @@ def custom_train(train_dataset, val_dataset, model, device, config, epochs=5, ba
             writer.add_scalar('val/Loss', val_loss, global_step)
 
     writer.close()
-
-if __name__ == "__main__":
-    print("main")

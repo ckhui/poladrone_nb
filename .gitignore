@@ -3,3 +3,8 @@ __pycache__
 ref
 log
 *.pth
+eval
+inference
+log
+ref
+YOLOv4_NPT
