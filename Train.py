@@ -2,8 +2,8 @@
 # coding: utf-8
 
 import os, sys
-base = "/Users/ckh/Documents/Poladrone/nb"
-# base = "D:/YoloV5_Hui/poladrone_nb"
+# base = "/Users/ckh/Documents/Poladrone/nb"
+base = "D:/YoloV5_Hui/poladrone_nb"
 sys.path.append(base + "/ref/pytorchYOLOv4")
 
 from exp.nb_TrainingRunnner import *
