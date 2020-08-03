@@ -6,10 +6,11 @@
 
 import cv2
 import time
+import torch
 
 import os, sys
-# base = "/Users/ckh/Documents/Poladrone/nb"
-base = "D:/YoloV5_Hui/poladrone_nb"
+base = "/Users/ckh/Documents/Poladrone/nb"
+# base = "D:/YoloV5_Hui/poladrone_nb"
 sys.path.append(base + "/ref/pytorchYOLOv4")
 
 from exp.nb_TrainingRunnner import *
@@ -99,6 +100,44 @@ def post_processing(img, conf_thresh, nms_thresh, output):
     return bboxes_batch
 
 
+from matplotlib import pyplot as plt
+import matplotlib
+
+def visualize_yolo(img_raw, yolo_out, conf_thresh= 0.5, gt=None, targetSize=1000):
+    out = yolo_out
+    img = img_raw.copy()
+
+    border = 2
+    font_size = 1.2
+    img = cv2.resize(img, (targetSize,targetSize))
+
+    if not out.size == 0:
+        out_box = out[out[:,:,4] > conf_thresh]
+        bboxes = out_box[:,0:4] * targetSize
+        conf = out_box[:,4]
+        x,y,w,h = bboxes[:,0], bboxes[:,1], bboxes[:,2]/2, bboxes[:,3]/2
+
+        x1, x2, y1, y2 = x-w, x+w, y-h, y+h
+
+        for b in zip(x1,y1,x2,y2, conf):
+            c = b[4]
+            b = list(map(int,b))
+            cv2.rectangle(img, (b[0],b[1]), (b[2],b[3]), (0,0,255), border)
+            text = "NPT %.1f"%(c*100) ##self.id_names[b[4]]
+            cv2.putText(img, text, (b[0],b[1]), cv2.FONT_HERSHEY_PLAIN, font_size, (255,0,0), border)
+
+    if not gt is None:
+        gt_box = gt[:,:4] * (targetSize / img_raw.shape[0])
+        for g in gt_box:
+            b = list(map(int,g))
+            cv2.rectangle(img, (b[0],b[1]), (b[2],b[3]), (0,255,255), border)
+            text = "GT" ##self.id_names[b[4]]
+            cv2.putText(img, text, (b[2],b[1]), cv2.FONT_HERSHEY_PLAIN, font_size, (0,255,255), border)
+
+    plt.imshow(img)
+
+    return img
+
 def bbox_iogt(box1, box2, x1y1x2y2=True):
     '''
     box1: GT
@@ -161,6 +200,28 @@ def score(gt, nms):
     score = sum(iogt > 0.9)
 
     return score, total
+
+def recall(gt, nms):
+    if nms.size == 0:
+        if len(gt) == 0:
+            return 1, 1
+        return 0, 1
+
+    box_gt = gt/1000
+    x1 = nms[:,:,0] - nms[:,:,2]
+    y1 = nms[:,:,1] - nms[:,:,3]
+    x2 = nms[:,:,0] + nms[:,:,2]
+    y2 = nms[:,:,1] + nms[:,:,3]
+    box_predict = np.concatenate([x1,y1,x2,y2], axis=0).T
+
+    iogt = [[bbox_iogt(g, p) for g in box_gt] for p in box_predict]
+    iogt = np.max(iogt, axis=1)
+
+    total = len(iogt)
+    score = sum(iogt > 0.9)
+
+    return score, total
+
 
 def benchmark_size(size):
 

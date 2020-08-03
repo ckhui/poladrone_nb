@@ -8,3 +8,4 @@ inference
 log
 ref
 YOLOv4_NPT
+*.onnx

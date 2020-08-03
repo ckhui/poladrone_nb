@@ -2,8 +2,8 @@ python Train.py -b 12 -c 1 -e 3000 \
     -train_txt "/Users/ckh/OneDrive - Default Directory/Hui_Wan/train_npt.txt" \
     -val_txt "/Users/ckh/OneDrive - Default Directory/Hui_Wan/train_npt.txt"
 
-python Train.py -b 12 -c 1 -e 3000 \
+python Train.py -b 16 -c 1 -e 3000 \
     -train_txt "D:/YoloV5_Hui/Dataset/train_npt.txt" \
     -val_txt "D:/YoloV5_Hui/Dataset/train_npt.txt"
 
-tensorboard -dir
+tensorboard --logdir log

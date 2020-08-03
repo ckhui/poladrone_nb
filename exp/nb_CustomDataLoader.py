@@ -214,6 +214,9 @@ class Detection_dataset(Dataset):
 
         names = ["palm1_npt", "palm1_byt", "palm2_mtl"]
         self.names = {name:i for i,name in enumerate(names)}
+
+        self.names["palm1-npt"] = 0
+
         self.id_names = {i: name for i,name in enumerate(names)}
 
         truth = {}
